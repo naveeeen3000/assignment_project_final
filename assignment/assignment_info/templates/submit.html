@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+{% block content %}
+{% if current_time.date < course.deadline_date %}
+  {% if submitted %}
+    <h2>You have successfully submitted your assignment.</h2>
+  {% else %}
+    <h1>Submit your assignment</h2>
+      {% for i in course.submission.all %}
+              {% if i.user.username == user.get_username %}
+                <p>You have already submitted the assigment. If you wish to modify your submission, submit again.</p>
+                <p>your submission ------> <a href="{{ i.answer.url }}" download >{{i.answer.name}}</a></p>
+              {% endif %}
+            {% endfor %}
+            
+      <div class="card">
+        <div class="card-header">
+          {{course.name}}
+        </div>
+          <div class="card-body">
+            <h5 class="card-title">Question:</h5>
+            <p class="card-text">{{course.question}}</p>
+            <p>Download quesion----> <a href="{{course.question_file.url}}" download>{{course.question_file.name}}</a></p>
+            <form enctype="multipart/form-data" method="post">
+              {% csrf_token %}
+              {% bootstrap_form form %}
+              <input type="submit" name="" value="Submit" class='btn btn-primary'>
+            </form>
+          </div>
+        </div>
+  {%endif%}
+{% else %}
+  {% if current_time.date == course.deadline_date %}
+    {% if current_time.time < course.deadline_time %}
+    {% if submitted %}
+    <h2>You have successfully submitted your assignment.</h2>
+  {% else %}
+    <h1>Submit your assignment</h2>
+      {% for i in course.submission.all %}
+              {% if i.user.username == user.get_username %}
+                <p>You have already submitted the assigment. If you wish to modify your submission, submit again.</p>
+                <p>your submission ------> <a href="{{ i.answer.url }}" download >{{i.answer.name}}</a></p>
+              {% endif %}
+            {% endfor %}
+            
+      <div class="card">
+        <div class="card-header">
+          {{course.name}}
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Question:</h5>
+          <p class="card-text">{{course.question}}</p>
+          <p>Download quesion----> <a href="{{course.question_file.url}}" download>{{course.question_file.name}}</a></p>
+          <form enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <input type="submit" name="" value="Submit" class='btn btn-primary'>
+          </form>
+        </div>
+      </div>
+  {%endif%}
+  {% else %}
+      <h1>You can't submit {{course.name }} assignment anymore</h1>
+    {% endif %}
+  {% else %}
+    <h1>You can't submit {{course.name }} assignment anymore</h1>
+  {% endif %}
+{% endif %}
+{% endblock %}
